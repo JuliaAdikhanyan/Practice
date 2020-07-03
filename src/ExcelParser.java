@@ -10,7 +10,7 @@ import java.util.Iterator;
 
 public class ExcelParser {
     public static ArrayList<String> getInfo(String path){
-        try (XSSFWorkbook excelBook = new XSSFWorkbook(path);){
+        try (XSSFWorkbook excelBook = new XSSFWorkbook(path)){
             ArrayList<String> answer = new ArrayList<String>();
             XSSFSheet excelSheet = excelBook.getSheet("Лист1");
 
@@ -24,12 +24,12 @@ public class ExcelParser {
                     XSSFCell tempCell = (XSSFCell) cellIterator.next();
                     answer.add(tempCell.toString().replaceAll("\\.0", ""));
                 }
-                System.out.println(" ");
+                //System.out.println(" ");
             }
             return answer;
         } catch (IOException e) {
             e.printStackTrace();
-            return new ArrayList<String >();
+            return new ArrayList<String>();
         }
     }
 }

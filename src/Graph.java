@@ -7,9 +7,11 @@ public class Graph {
     private static final int INF = 2147483647;
 
     private void addEdge(int v, Pair<Integer, Integer> edge){
-        if(edges.size() < Math.max(v, edge.getKey())){
-            for (int i = 0; i < Math.max(v, edge.getKey()) - edges.size() + 3; i++){
+        if(edges.size() < Math.max(v, edge.getFirst())){
+            for (int i = 0; i < Math.max(v, edge.getFirst()) - edges.size() + 3; i++){
                 edges.add(new ArrayList<Pair<Integer, Integer>>());
+                //System.out.println(v + " - " + edge.getFirst());
+                //System.out.println(edges.size());
             }
         }
         edges.get(v).add(edge);
@@ -31,7 +33,7 @@ public class Graph {
     }
 
     public void findPath(int firstV, int secondV){
-        firstV--;
+        firstV--; // к индексам
         secondV--;
 
         int n = edges.size();
@@ -45,10 +47,11 @@ public class Graph {
             used[i] = false;
         }
         coasts[firstV] = 0;
+
         for (int i = 0; i < n; i++) {
             int v = -1;
             for (int j = 0; j < n; j++) {
-                if (!used[j] && (v == -1 || coasts[j] < coasts[v])){
+                if (!used[j] && (v == -1 || coasts[j] < coasts[v])){ // из неиспользованных выб самую деш
                     v = j;
                 }
             }
@@ -56,9 +59,8 @@ public class Graph {
                 break;
             }
             used[v] = true;
-
             for (int j = 0; j < edges.get(v).size(); j++) {
-                int to = edges.get(v).get(j).getFirst();
+                int to = edges.get(v).get(j).getFirst(); // релаксация
                 int coast = edges.get(v).get(j).getSecond();
                 if (coasts[v] + coast < coasts[to]) {
                     coasts[to] = coasts[v] + coast;
