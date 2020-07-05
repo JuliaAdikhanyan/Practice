@@ -30,7 +30,6 @@ public class Graph {
             i++;
             int coast = Integer.parseInt(info.get(i));
             this.addEdge(firstV, new Pair<Integer, Integer>(secondV,coast), directive);
-            //System.out.println(firstV + " " + secondV + " " + coast);
         }
     }
 
