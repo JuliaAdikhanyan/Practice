@@ -6,19 +6,21 @@ public class Graph {
     private ArrayList<ArrayList<Pair<Integer, Integer>>> edges;
     private static final int INF = 2147483647;
 
-    private void addEdge(int v, Pair<Integer, Integer> edge){
-        if(edges.size() < Math.max(v, edge.getFirst())){
-            for (int i = 0; i < Math.max(v, edge.getFirst()) - edges.size() + 3; i++){
+    private void addEdge(int v, Pair<Integer, Integer> edge, boolean directive) {
+        int curCount = edges.size();
+        if(edges.size() <= Math.max(v, edge.getKey())){
+            for (int i = 0; i < Math.max(v, edge.getKey()) - curCount + 1; i++){
                 edges.add(new ArrayList<Pair<Integer, Integer>>());
-                //System.out.println(v + " - " + edge.getFirst());
-                //System.out.println(edges.size());
             }
         }
         edges.get(v).add(edge);
+        if (!directive) {
+            edges.get(edge.getFirst()).add(new Pair<Integer, Integer>(v, edge.getSecond()));
+        }
         //System.out.println(edges.size());
     }
 
-    public Graph(String pathToExcel){
+    public Graph(String pathToExcel, boolean directive){
         this.edges = new ArrayList<>();
         ArrayList<String> info = ExcelParser.getInfo(pathToExcel);
         for (int i = 0; i < info.size(); i++){
@@ -27,13 +29,13 @@ public class Graph {
             int secondV = Integer.parseInt(info.get(i)) - 1;
             i++;
             int coast = Integer.parseInt(info.get(i));
-            this.addEdge(firstV, new Pair<Integer, Integer>(secondV,coast));
+            this.addEdge(firstV, new Pair<Integer, Integer>(secondV,coast), directive);
             //System.out.println(firstV + " " + secondV + " " + coast);
         }
     }
 
     public void findPath(int firstV, int secondV){
-        firstV--; // к индексам
+        firstV--;
         secondV--;
 
         int n = edges.size();
@@ -47,11 +49,10 @@ public class Graph {
             used[i] = false;
         }
         coasts[firstV] = 0;
-
         for (int i = 0; i < n; i++) {
             int v = -1;
             for (int j = 0; j < n; j++) {
-                if (!used[j] && (v == -1 || coasts[j] < coasts[v])){ // из неиспользованных выб самую деш
+                if (!used[j] && (v == -1 || coasts[j] < coasts[v])){
                     v = j;
                 }
             }
@@ -59,8 +60,9 @@ public class Graph {
                 break;
             }
             used[v] = true;
+
             for (int j = 0; j < edges.get(v).size(); j++) {
-                int to = edges.get(v).get(j).getFirst(); // релаксация
+                int to = edges.get(v).get(j).getFirst();
                 int coast = edges.get(v).get(j).getSecond();
                 if (coasts[v] + coast < coasts[to]) {
                     coasts[to] = coasts[v] + coast;
